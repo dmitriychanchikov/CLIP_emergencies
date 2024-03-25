@@ -1,5 +1,6 @@
 from typing import Dict, List, Union
 
+import matplotlib.pyplot as plt
 import pandas as pd
 import torch.nn.functional as F
 
@@ -192,6 +193,7 @@ def save_df(df: pd.DataFrame, format: str, save_path: str, video_path: str, fps:
         text_len (int): Количество текстовых описаний (столбцов DataFrame)
         add_word (str, optional): дополнительное слово для формирования имени файла (по умолчанию add_word = None)
     """
+    
     # Формирование пути и имени сохраняемого файла
     dir, file = video_path.split('/')[-2:]
     save_dir = f'{save_path}/{dir}'
@@ -205,7 +207,32 @@ def save_df(df: pd.DataFrame, format: str, save_path: str, video_path: str, fps:
     os.makedirs(save_dir, exist_ok=True)
     if format == 'csv':
         df.to_csv(f'{save_dir}/{name}.csv')
+        print(f'Сохранено в {save_dir}/{name}.csv')
     elif format == 'excel':
         df.to_excel(f'{save_dir}/{name}.xlsx')
+        print(f'Сохранено в {save_dir}/{name}.xlsx')
     else:
         raise ValueError("Неподдерживаемый формат. Допустимые значения: 'csv' или 'excel'")
+
+
+def plot_results(df: pd.DataFrame, xticks: int, plots: int = 3) -> None:
+    """
+    Строит графики для результатов из DataFrame
+
+    Аргументы:
+        df (pd.DataFrame): DataFrame с результатами
+        xticks (int): количество отметок времени на горизонтальной оси
+        plots (int, optional): количество графиков, отображаемых на одной фигуре (по умолчанию plots=3)
+    """
+
+    for i in range(0, len(df.columns), plots):
+        plt.figure(figsize=(15, 4))
+
+        for j in range(plots):
+            if i + j < len(df.columns):
+                plt.plot(df.index, df.iloc[:, i + j], label=df.columns[i + j])
+
+        plt.xticks(df.index[::xticks], rotation=90)
+        plt.ylim((0.15, 0.3))
+        plt.legend()
+        plt.show()
