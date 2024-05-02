@@ -25,6 +25,26 @@ def time_to_str(time: float) -> str:
     return res
 
 
+def str_to_time(time_str: str) -> float:
+    """
+    Преобразует строку времени в число с плавающей точкой
+
+    Аргументы:
+        time_str (str): строковое представление времени в формате 'mm:ss.sss'
+
+    Возвращает:
+        float: время в секундах
+    """
+
+    minutes_str, seconds_str = time_str.split(':')
+    minutes = int(minutes_str)
+    seconds = float(seconds_str)
+
+    time_in_seconds = minutes * 60 + seconds
+
+    return time_in_seconds
+
+
 def preprocess_text(model: torch.nn.Module, tokenizer: SimpleTokenizer, text_descriptions: List[str], add_word: str = None) -> Dict[str, torch.Tensor]:
     """
     Кодирует текстовые описания с использованием токенизатора
@@ -56,7 +76,7 @@ def preprocess_text(model: torch.nn.Module, tokenizer: SimpleTokenizer, text_des
             text_features = model.encode_text(text_tensor).float()
             text_features /= text_features.norm(dim=-1, keepdim=True)
 
-        key = f'({add_word[:4]}) {term}' if add_word else f'{term}'
+        key = f'({add_word[:4]}) {term}' if add_word else term
         text_tokens_dict[key] = text_features
 
     return text_tokens_dict
@@ -234,5 +254,6 @@ def plot_results(df: pd.DataFrame, xticks: int, plots: int = 3) -> None:
 
         plt.xticks(df.index[::xticks], rotation=90)
         plt.ylim((0.15, 0.3))
+        plt.grid(True)
         plt.legend()
         plt.show()
