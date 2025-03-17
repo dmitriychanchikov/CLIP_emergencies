@@ -65,8 +65,8 @@ text_descriptions = [
         'a gunfight',
         'an act of terrorism',
 
-        'terrorist',
-        'attacker',
+        'a terrorist',
+        'an attacker',
         'a gunman',
         'an armed man',
         'a man with a gun',
